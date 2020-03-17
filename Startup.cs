@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EurocomV2.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,6 +25,15 @@ namespace EurocomV2
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //This is for a Identity Check.
+            services.AddIdentity<AppUserModel, AppRoleModel>(options => { options.User.RequireUniqueEmail = true; })
+                .AddEntityFrameworkStores<AppIdentityContext>();
+
+            services.AddDbContext<AppIdentityContext>(cfg =>
+            {
+                cfg.UseSqlServer(Configuration.GetConnectionString("eurocomdb"));
+            });
+
             services.AddControllersWithViews();
         }
 
